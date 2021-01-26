@@ -9,7 +9,7 @@
 
 #$ -N getRegion
 #$ -l h_rt=24:00:00
-#$ -l h_vmem=500G
+#$ -l h_vmem=50G
 #$ -binding linear:1
 #$ -t 1
 
