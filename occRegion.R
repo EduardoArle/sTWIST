@@ -1,9 +1,9 @@
 library("plyr")
 
-setwd("/gpfs1/data/idiv_meyer/01_projects/eduardo/2nd_chapter/Fresh_water")
+setwd("/gpfs1/data/idiv_meyer/01_projects/eduardo/sTWIST/Intermediate_steps")
 
-table <- readRDS("FreshWater_GBIF_shpID")
+table <- readRDS("GRIIS_amphibians_GBIF_shpID")
 
-table2 <- ddply(table,.(species,year,freshWaterRegion), nrow)
+table2 <- ddply(table,.(species,year,griisRegion), nrow)
 
 saveRDS(table2,"Occurrence_region_count")
