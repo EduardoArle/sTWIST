@@ -80,6 +80,10 @@ mf4 <- mf4[,-6]
 mf4$ISI <- (mf4$Rd + mf4$Im +mf4$In)/3
 
 #include IPBES region
+#I'll do it manually this time...
+
+setwd(wd.out)
+write.csv(mf4,"Information_Status_Indicator.csv")
 
 wd <- "I:/MAS/04_personal/Eduardo/sTWIST/GRIIS_shp"
 
