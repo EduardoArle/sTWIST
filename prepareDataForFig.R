@@ -56,6 +56,30 @@ mf2 <- merge(mf,table8,by.x = "Location",by.y = "Region",
              sort = F, all.x = T)
 mf2$V1[which(is.na(mf2$V1))] <- 0
 
+#calculate range dynamics evidence
+mf2$Rd <- mf2$V1/mf2$n_species*10
+mf2 <- mf2[,-4]
+
+#include Im in the table
+master_file$Im <- ifelse(master_file$IsInvasive == "Invasive",1,0)
+mf_Im <- ddply(master_file,.(Location),summarise,Impac=sum(Im))
+
+mf3 <- merge(mf2,mf_Im,by = "Location", sort = F, all.x = T)
+mf3$Im <- mf3$Impac/mf3$n_species*100
+mf3 <- mf3[,-5]
+
+#include In 
+master_file$In <- ifelse(master_file$FirstRecord_orig == "",0,1)
+mf_In <- ddply(master_file,.(Location),summarise,Intro=sum(In))
+
+mf4 <- merge(mf3,mf_In,by = "Location", sort = F, all.x = T)
+mf4$In <- mf4$Intro/mf4$n_species*100
+mf4 <- mf4[,-6]
+
+#calculate final indicator
+mf4$ISI <- (mf4$Rd + mf4$Im +mf4$In)/3
+
+#include IPBES region
 
 wd <- "I:/MAS/04_personal/Eduardo/sTWIST/GRIIS_shp"
 
