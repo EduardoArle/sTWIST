@@ -87,3 +87,49 @@ shp2 <- spTransform(shp,CRS(proj4string(world)))
 par(mar=c(4,4,4,4))
 plot(shp2)
 plot(worldmapframe,add=T)
+
+# load old griis table
+setwd("C:/Users/ca13kute/Documents/sTWIST")
+old_table <- read.csv("AlienSpecies_MultipleDBs_Masterfile.csv")
+countries <- as.character(unique(old_table$Country))
+
+missing <- as.character(shp2$Region2[-which(shp2$Region2 %in% 
+                                                    countries)])
+
+grep(missing[29],countries)
+
+countries[207] <- missing[15]
+countries[212] <- missing[16]
+countries[27] <- missing[19]
+countries[49] <- missing[21]
+countries[184] <- missing[25]
+
+merge_table <- table[,c(2,4,8)]
+
+shp3 <- shp2
+shp3@data <- merge(shp3@data,merge_table,
+                   by.x="Region2",by.y="Location",
+                   sort=F,all.x=T)
+
+shp3$n_species[-which(shp3$Region2 %in% countries)] <- "no data"
+shp3$n_species[which(is.na(shp3$n_species))] <- 0
+shp3$n_species[which(shp3$n_species == "no data")] <- NA
+shp3$n_species <- as.numeric(shp3$n_species)
+
+shp3$ISI[-which(shp3$Region2 %in% countries)] <- "no data"
+shp3$ISI[which(is.na(shp3$ISI))] <- 0
+shp3$ISI[which(shp3$ISI == "no data")] <- NA
+shp3$ISI <- as.numeric(shp3$ISI)
+
+
+summary(shp3$ISI)
+head(shp3@data)
+
+tail(shp3@data)
+shp2$n_amphibians[-which(shp2$Region2 %in% countries)] <- NA
+
+head(table)
+
+head(old_table)
+
+countries[207]
