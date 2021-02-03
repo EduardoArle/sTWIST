@@ -1,4 +1,4 @@
-library(raster);library(rgdal)
+library(raster);library(rgdal);library(rgeos)
 
 setwd("C:/Users/ca13kute/Documents/sTWIST")
 
@@ -73,6 +73,9 @@ points(x = rep(12,4), y = c(30,24,18,12),
 #load griis_shp
 wd_shp <- "C:/Users/ca13kute/Documents/sTWIST/GRIIS_shp"
 shp <- readOGR("GRIIS_ISO3",dsn = wd_shp)
+shp2 <- gSimplify(shp,0.2,topologyPreserve = T)
+shp2$a <- rep(0,length(shp2))
+shp2@data <- shp@data
 
 # Load world map frame and continent outline
 setwd("C:/Users/ca13kute/Documents/sTWIST")
@@ -82,9 +85,9 @@ worldmapframe <- readRDS("Worldmapframe.rds")
 
 # reproject everythign to Eckert
 worldmapframe <- spTransform(worldmapframe,CRS(proj4string(world)))
-shp2 <- spTransform(shp,CRS(proj4string(world)))
+shp2 <- spTransform(shp2,CRS(proj4string(world)))
 
-par(mar=c(4,4,4,4))
+par(mar=c(1,1,1,1))
 plot(shp2)
 plot(worldmapframe,add=T)
 
@@ -106,10 +109,31 @@ countries[184] <- missing[25]
 
 merge_table <- table[,c(2,4,8)]
 
-shp3 <- shp2
-shp3@data <- merge(shp3@data,merge_table,
-                   by.x="Region2",by.y="Location",
-                   sort=F,all.x=T)
+shp3 <- shp2 #create a copy of the shp
+shp3$n_species <- rep(9999,nrow(shp3))  #include n_species 
+shp3$ISI <- rep(9999,nrow(shp3))  #include ISI
+for(i in 1:nrow(shp3))
+{
+   a <- which(as.character(merge_table$Location) == 
+              as.character(shp3$Region[i]))
+   if(length(a) == 1)
+   {
+      shp3$n_species[i] <- merge_table$n_species[a]   
+      shp3$ISI[i] <- merge_table$ISI[a]
+   }else{
+      shp3$n_species[i] <- NA  
+      shp3$ISI[i] <- NA
+   }
+}
+
+head(shp3@data)
+
+
+#check data on specific country
+
+patt <- "Antarctica"
+target_country <- shp3[grep(patt,shp3$Region2),]
+target_country@data
 
 shp3$n_species[-which(shp3$Region2 %in% countries)] <- "no data"
 shp3$n_species[which(is.na(shp3$n_species))] <- 0
@@ -121,15 +145,39 @@ shp3$ISI[which(is.na(shp3$ISI))] <- 0
 shp3$ISI[which(shp3$ISI == "no data")] <- NA
 shp3$ISI <- as.numeric(shp3$ISI)
 
+#create vector to populate with the colours
+col_ISI <- rep("xx",nrow(shp3)) 
 
-summary(shp3$ISI)
+#create vector to populate with the transparency
+alpha_ISI <- shp3$ISI[which(!is.na(shp3$ISI))] * 2.55
+
+col_ISI[which(!is.na(shp3$ISI))] <- rgb(40,40,148,
+                                        alpha=alpha_ISI,
+                                        maxColorValue = 255)
+
+col_ISI[which(col_ISI=="xx")] <- "white"
+
+plot(shp3,col=col_ISI)
+plot(worldmapframe,add=T)
+plot(shp3[which(is.na(shp3$n_species)),],add=F,density=50)
+
+a <- shp3[which(is.na(shp3$n_species)),]
+a@data     
+
+b <- rgb(40,40,148,alpha=100,maxColorValue = 255)
+
+target_country <- shp3[grep(patt,shp3$Region2),]
+target_country@data
+
+#check data from the GRIIS old table
+
+grep("Alaska",old_table$Country)
+
+test <- shp3[1,]
+plot(test,col=b)
+
+plot(shp[1,],density=10,col="red")
+
+rgb(40,40,148) #blue
+rgb(135,0,0) #red
 head(shp3@data)
-
-tail(shp3@data)
-shp2$n_amphibians[-which(shp2$Region2 %in% countries)] <- NA
-
-head(table)
-
-head(old_table)
-
-countries[207]
