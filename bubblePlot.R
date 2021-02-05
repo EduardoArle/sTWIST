@@ -1,6 +1,6 @@
 library(raster);library(rgdal);library(rgeos)
 
-setwd("C:/Users/ca13kute/Documents/sTWIST")
+setwd("C:/Users/ca13kute/Dropbox/sTWIST (1)")
 
 table <- read.csv("Information_Status_Indicator.csv")
 
@@ -71,7 +71,7 @@ points(x = rep(12,4), y = c(30,24,18,12),
 ### Plot the maps
 
 #load griis_shp
-wd_shp <- "C:/Users/ca13kute/Documents/sTWIST/GRIIS_shp"
+wd_shp <- "C:/Users/ca13kute/Dropbox/sTWIST (1)/GRIIS_shp"
 shp <- readOGR("GRIIS_ISO3",dsn = wd_shp)
 shp2 <- gSimplify(shp,0.2,topologyPreserve = T)
 shp2$a <- rep(0,length(shp2))
