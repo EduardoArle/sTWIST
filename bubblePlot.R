@@ -194,13 +194,32 @@ plot(shp3,col=col_n_sps)
 plot(worldmapframe,add=T)
 plot(shp3[which(is.na(shp3$n_species)),],add=T,density=150)
 
+col_leg <- colorRampPalette(c("white", rgb(135,0,0,
+                                           alpha=255,
+                                           maxColorValue = 255)))
 
+gradientLegend(valRange = c(0, 17), 
+               pos=c(0.3,0.23,0.7,.245),
+               color = col_leg(20), 
+               side = 1,
+               n.seg = 1)
                                            
                                           
      
            
-shp3@data                                
-                                           
+#save tables
+
+table_bubble <- table[,-c(1,10)]
+
+setwd("C:/Users/ca13kute/Dropbox/sTWIST/Figure")
+
+write.csv(table_bubble,"Table_bubble_plot.csv")
+            
+head(shp3@data)  
+
+table_maps <- shp3@data[,c(1,8,9)]
+
+write.csv(table_maps,"Table_maps.csv")
                                                                                  maxColorValue = 255)))
 ##################################
 
