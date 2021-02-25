@@ -17,6 +17,19 @@ table$col[which(table$IPBES == "Europe-Central Asia")] <- col.europe
 table$col[which(table$IPBES == "Americas")] <- col.america
 table$col[which(table$IPBES == "Africa")] <- col.africa
 
+#create another column with colours to change the labeled countries contour
+table$col2 <- table$col
+
+#select countries for the labels
+
+countries <- c("Australia","Brazil","Norway","Italy",
+               "Russian Federation","United States of America",
+               "United Kingdom of Great Britain and Northern Ireland",
+               "Spain","China","Ireland","Indonesia","Greece")
+
+#identify the positions of the countries to be labeled
+positions <- which(table$Location %in% countries)
+
 size <- (table$Rd/45) +.7
 
 noise <- 3
@@ -29,16 +42,9 @@ plot(table$In + noise_x,table$Im + noise_y,
      xlim=c(-5,105),ylim=c(-5,105),
      xlab = "Introduction evidence (In)",
      ylab = "Impact evidence (Im)",
-     col = table$col, pch=19, cex = size)
+     col = table$col, bg = table$col, pch=21, cex = size)
 
-countries <- c("Australia","Brazil","Norway","Italy",
-               "Russian Federation","United States of America",
-               "United Kingdom of Great Britain and Northern Ireland",
-               "Spain","China","Ireland","Indonesia","Greece")
 
-positions <- which(table$Location %in% countries)
-
-table$Location[positions]
 
 c_labels <- c("Australia","Brazil","Italy",
               "Russia","Spain","UK","USA","Indonesia",
