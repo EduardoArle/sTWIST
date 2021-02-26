@@ -29,8 +29,6 @@ master_file <- read.csv("GRIISAmph_FirstRecords_FromHanno4Dec2020_AmphOnly.xlxs.
 master_file$sps_reg <- paste0(master_file$Taxon,"_",
                               master_file$Location)
 
-#eliminate rows combining sps/reg that are not listed in the master file
-
 #create column informing to with lustre the occurrences belong
 table4$lustre <- floor((table4$year - 1970) / 5) + 1
 
