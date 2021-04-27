@@ -1,5 +1,7 @@
+#load libraries
 library(plyr);library(rgdal);library(raster)
 
+#paths
 wd.out <- "/gpfs1/data/idiv_meyer/01_projects/eduardo/sTWIST/Intermediate_steps"
 
 setwd(wd.out)
