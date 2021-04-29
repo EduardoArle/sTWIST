@@ -1,5 +1,5 @@
 #load libraries
-library(raster);library(rgdal)
+library(raster);library(rgdal);library(rgeos)
 
 #set working directories
 wd_shp <- "C:/Users/ca13kute/Dropbox/sTWIST/GRIIS_shp" #griis shapefile
@@ -12,7 +12,7 @@ shp <- readOGR("GRIIS_ISO3",dsn = wd_shp)
 #to plot, so I simplified the borders a bit
 shp2 <- gSimplify(shp,0.2,topologyPreserve = T)
 
-#put data back making a spatialPolygonDataFrame
+#put the attribute table back making a spatialPolygonDataFrame
 shp3 <- SpatialPolygonsDataFrame(shp2,shp@data)
 
 # Load world map frame and continent outline
@@ -24,19 +24,25 @@ worldmapframe <- readRDS("Worldmapframe.rds")
 # reproject everythign to Eckert
 worldmapframe <- spTransform(worldmapframe,CRS(proj4string(world)))
     #I get warning messages here, but things keep working!
-shp2 <- spTransform(shp2,CRS(proj4string(world)))
+shp3 <- spTransform(shp3,CRS(proj4string(world)))
     #same!
 
+#plot maps
 par(mar=c(1,1,1,1))
 plot(shp2)
 plot(worldmapframe,add=T)
+
+#### The next parts are a bit messy because I had to do a lot of
+#things manually
 
 # load old griis table
 setwd("C:/Users/ca13kute/Dropbox/sTWIST")
 old_table <- read.csv("AlienSpecies_MultipleDBs_Masterfile.csv")
 countries <- as.character(unique(old_table$Country))
 
-missing <- as.character(shp2$Region2[-which(shp2$Region2 %in% 
+#identify GRIIS regions missing in the tables
+#as we are only dealing with amphibians, not all regions are represented
+missing <- as.character(shp3$Region2[-which(shp3$Region2 %in% 
                                               countries)])
 
 grep(missing[29],countries)
@@ -49,24 +55,24 @@ countries[184] <- missing[25]
 
 merge_table <- table[,c(2,4,8)]
 
-shp3 <- shp2 #create a copy of the shp
-shp3$n_species <- rep(9999,nrow(shp3))  #include n_species 
-shp3$ISI <- rep(9999,nrow(shp3))  #include ISI
-for(i in 1:nrow(shp3))
+shp4 <- shp3 #create a copy of the shp
+shp4$n_species <- rep(9999,nrow(shp4))  #include n_species 
+shp4$ISI <- rep(9999,nrow(shp4))  #include ISI
+for(i in 1:nrow(shp4))
 {
   a <- which(as.character(merge_table$Location) == 
-               as.character(shp3$Region[i]))
+               as.character(shp4$Region[i]))
   if(length(a) == 1)
   {
-    shp3$n_species[i] <- merge_table$n_species[a]   
-    shp3$ISI[i] <- merge_table$ISI[a]
+    shp4$n_species[i] <- merge_table$n_species[a]   
+    shp4$ISI[i] <- merge_table$ISI[a]
   }else{
-    shp3$n_species[i] <- NA  
-    shp3$ISI[i] <- NA
+    shp4$n_species[i] <- NA  
+    shp4$ISI[i] <- NA
   }
 }
 
-head(shp3@data)
+head(shp4@data)
 
 
 #check data on specific country
@@ -75,23 +81,25 @@ patt <- "Antarctica"
 target_country <- shp3[grep(patt,shp3$Region2),]
 target_country@data
 
-shp3$n_species[-which(shp3$Region2 %in% countries)] <- "no data"
-shp3$n_species[which(is.na(shp3$n_species))] <- 0
-shp3$n_species[which(shp3$n_species == "no data")] <- NA
-shp3$n_species <- as.numeric(shp3$n_species)
+### mark as "no data" the regions that are not listed in GRIIS at all
+### mark as 0 those regions listed in GRIIS, but without amphibians
+shp4$n_species[-which(shp4$Region2 %in% countries)] <- "no data"
+shp4$n_species[which(is.na(shp4$n_species))] <- 0
+shp4$n_species[which(shp4$n_species == "no data")] <- NA
+shp4$n_species <- as.numeric(shp4$n_species)
 
-shp3$ISI[-which(shp3$Region2 %in% countries)] <- "no data"
-shp3$ISI[which(is.na(shp3$ISI))] <- 0
-shp3$ISI[which(shp3$ISI == "no data")] <- NA
-shp3$ISI <- as.numeric(shp3$ISI)
+shp4$ISI[-which(shp4$Region2 %in% countries)] <- "no data"
+shp4$ISI[which(is.na(shp4$ISI))] <- 0
+shp4$ISI[which(shp4$ISI == "no data")] <- NA
+shp4$ISI <- as.numeric(shp4$ISI)
 
 #create vector to populate with the colours
 col_ISI <- rep("xx",nrow(shp3)) 
 
 #create vector to populate with the transparency
-alpha_ISI <- shp3$ISI[which(!is.na(shp3$ISI))] * 2.55
+alpha_ISI <- shp4$ISI[which(!is.na(shp4$ISI))] * 2.55
 
-col_ISI[which(!is.na(shp3$ISI))] <- rgb(40,40,148,
+col_ISI[which(!is.na(shp4$ISI))] <- rgb(40,40,148,
                                         alpha=alpha_ISI,
                                         maxColorValue = 255)
 
@@ -99,16 +107,17 @@ col_ISI[which(col_ISI=="xx")] <- "white"
 
 par(mar=c(2,2,2,2))
 
-plot(shp3,col=col_ISI)
-plot(worldmapframe,add=T)
-plot(shp3[which(is.na(shp3$n_species)),],add=T,density=150)
+plot(shp4,col=col_ISI) # plot map with varying transparency to show the overall indicator values
+plot(worldmapframe,add=T) # plot frame
+plot(shp4[which(is.na(shp4$n_species)),],add=T,density=150) #plot the countries with no data with dashed lines
 
+#prepare legend
 col_leg <- colorRampPalette(c("white", rgb(40,40,148,
                                            alpha=255,
                                            maxColorValue = 255)))
 
 gradientLegend(valRange = c(0, 1), 
-               pos=c(0.3,0.23,0.7,.245),
+               pos=c(0.3,0,0.7,.015),
                color = col_leg(20), 
                side = 1,
                n.seg = 1)
@@ -117,12 +126,12 @@ gradientLegend(valRange = c(0, 1),
 ### Plot small map
 
 #create vector to populate with the colours
-col_n_sps <- rep("xx",nrow(shp3)) 
+col_n_sps <- rep("xx",nrow(shp4)) 
 
 #create vector to populate with the transparency
-alpha_n_sps <- shp3$n_species[which(!is.na(shp3$n_species))]/17 * 255
+alpha_n_sps <- shp4$n_species[which(!is.na(shp4$n_species))]/17 * 255
 
-col_n_sps[which(!is.na(shp3$n_species))] <- rgb(135,0,0,
+col_n_sps[which(!is.na(shp4$n_species))] <- rgb(135,0,0,
                                                 alpha=alpha_n_sps,
                                                 maxColorValue = 255)
 
@@ -130,22 +139,22 @@ col_n_sps[which(col_n_sps=="xx")] <- "white"
 
 par(mar=c(2,2,2,2))
 
-plot(shp3,col=col_n_sps)
+plot(shp4,col=col_n_sps)
 plot(worldmapframe,add=T)
-plot(shp3[which(is.na(shp3$n_species)),],add=T,density=150)
+plot(shp4[which(is.na(shp4$n_species)),],add=T,density=150)
 
 col_leg <- colorRampPalette(c("white", rgb(135,0,0,
                                            alpha=255,
                                            maxColorValue = 255)))
 
 gradientLegend(valRange = c(0, 17), 
-               pos=c(0.3,0.23,0.7,.245),
+               pos=c(0.3,0,0.7,.015),
                color = col_leg(20), 
                side = 1,
                n.seg = 1)
 
 
-
+########################### SCRAP #########################
 
 #save tables
 
