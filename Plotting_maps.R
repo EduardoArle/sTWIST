@@ -3,7 +3,12 @@ library(raster);library(rgdal);library(rgeos)
 
 #set working directories
 wd_shp <- "C:/Users/ca13kute/Dropbox/sTWIST/GRIIS_shp" #griis shapefile
+wd_tables <- "C:/Users/ca13kute/Dropbox/sTWIST" #tables with info to be put in the map
 wd_map_stuff <- "C:/Users/ca13kute/Dropbox/sTWIST" #files to shape the map
+
+#load table with indicator info
+setwd(wd_tables)
+table <- read.csv("Information_Status_Indicator.csv")
 
 #load griis_shp
 shp <- readOGR("GRIIS_ISO3",dsn = wd_shp)
@@ -36,7 +41,7 @@ plot(worldmapframe,add=T)
 #things manually
 
 # load old griis table
-setwd("C:/Users/ca13kute/Dropbox/sTWIST")
+setwd(wd_tables)
 old_table <- read.csv("AlienSpecies_MultipleDBs_Masterfile.csv")
 countries <- as.character(unique(old_table$Country))
 
@@ -53,6 +58,7 @@ countries[27] <- missing[19]
 countries[49] <- missing[21]
 countries[184] <- missing[25]
 
+#create a table to merge the info into the shp attribute table
 merge_table <- table[,c(2,4,8)]
 
 shp4 <- shp3 #create a copy of the shp
