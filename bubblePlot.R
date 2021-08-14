@@ -40,8 +40,8 @@ par(pty="s")
 
 plot(table$In + noise_x,table$Im + noise_y,
      xlim=c(-5,105),ylim=c(-5,105),
-     xlab = "Introduction evidence (In)",
-     ylab = "Impact evidence (Im)",
+     xlab = substitute(paste("Introduction evidence (",italic("In"),")")),
+     ylab = substitute(paste("Impact evidence ( ",italic("Im"),")")),
      col = table$col, bg = table$col, pch=21, cex = size)
 
 
