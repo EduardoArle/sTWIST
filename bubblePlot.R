@@ -38,18 +38,19 @@ noise_y <- runif(length(table$Im),-noise,noise)
 
 setwd("C:/Users/ca13kute/Dropbox/sTWIST/Figure/Bubble_plot")
 
-jpeg(file="Bubble_plot7.jpeg",width = 1000, height = 1000, quality = 100,
-     res = 250)
+#jpeg(file="Bubble_plot7.jpeg",width = 1000, height = 1000, quality = 100,
+     #res = 250)
 
+par(mar=c(5,5,5,5))
 par(pty="s")
 
 plot(table$In + noise_x,table$Im + noise_y,
      xlim=c(-5,105),ylim=c(-5,105),
      xlab = substitute(paste("Introduction evidence (",italic("In"),")")),
      ylab = substitute(paste("Impact evidence ( ",italic("Im"),")")),
-     cex.lab = 0.5,
-     cex.axis = 0.5,
-     col = table$col, bg = table$col, pch=21, cex = size/2)
+     cex.lab = 2,
+     cex.axis = 2,
+     col = table$col, bg = table$col, pch=21, cex = size*2)
 
 
 
@@ -59,14 +60,14 @@ c_labels <- c("Australia","Brazil","Italy",
 
 text(table$In[positions]+noise_x[positions],
      table$Im[positions]+noise_y[positions]-5,
-     c_labels,cex = 0.7/2)
+     c_labels,cex = 1.4)
 
 points(table$In[positions]+noise_x[positions],
        table$Im[positions]+noise_y[positions],
-       pch=21, cex = size[positions]/2) # fix pch
+       pch=21, cex = size[positions]*2) # fix pch
 
 
-dev.off()
+#dev.off()
 
 
 par(pty="s")
