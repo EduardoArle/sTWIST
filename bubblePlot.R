@@ -1,6 +1,6 @@
-library(raster);library(rgdal);library(rgeos)
+library(raster);library(rgdal);library(rgeos);library(plotfunctions)
 
-setwd("C:/Users/ca13kute/Dropbox/sTWIST (1)")
+setwd("C:/Users/ca13kute/Dropbox/sTWIST")
 
 table <- read.csv("Information_Status_Indicator.csv")
 
@@ -27,8 +27,10 @@ par(pty="s")
 
 plot(table$In + noise_x,table$Im + noise_y,
      xlim=c(-5,105),ylim=c(-5,105),
-     xlab = "Introduction evidence (In)",
-     ylab = "Impact evidence (Im)",
+     xlab = substitute(paste("Introduction evidence ("
+                             ,italic("In"),")")),
+     ylab = substitute(paste("Impact evidence ("
+                              ,italic(" Im"),")")),
      col = table$col, pch=19, cex = size)
 
 countries <- c("Australia","Brazil","Norway","Italy",
@@ -71,14 +73,14 @@ points(x = rep(12,4), y = c(30,24,18,12),
 ### Plot the maps
 
 #load griis_shp
-wd_shp <- "C:/Users/ca13kute/Dropbox/sTWIST (1)/GRIIS_shp"
+wd_shp <- "C:/Users/ca13kute/Dropbox/sTWIST/GRIIS_shp"
 shp <- readOGR("GRIIS_ISO3",dsn = wd_shp)
 shp2 <- gSimplify(shp,0.2,topologyPreserve = T)
 shp2$a <- rep(0,length(shp2))
 shp2@data <- shp@data
 
 # Load world map frame and continent outline
-setwd("C:/Users/ca13kute/Documents/sTWIST")
+setwd("C:/Users/ca13kute/Dropbox/sTWIST")
 
 world <- readRDS("wrld.rds")
 worldmapframe <- readRDS("Worldmapframe.rds")
@@ -92,7 +94,7 @@ plot(shp2)
 plot(worldmapframe,add=T)
 
 # load old griis table
-setwd("C:/Users/ca13kute/Documents/sTWIST")
+setwd("C:/Users/ca13kute/Dropbox/sTWIST")
 old_table <- read.csv("AlienSpecies_MultipleDBs_Masterfile.csv")
 countries <- as.character(unique(old_table$Country))
 
@@ -159,7 +161,18 @@ col_ISI[which(col_ISI=="xx")] <- "white"
 
 plot(shp3,col=col_ISI)
 plot(worldmapframe,add=T)
-plot(shp3[which(is.na(shp3$n_species)),],add=F,density=50)
+plot(shp3[which(is.na(shp3$n_species)),],add=T,density=100)
+
+gradientLegend(valRange = c(0, 1), 
+               pos = c(-10000000, -8000000, 10000000, -7900000),
+               color = "terrain", 
+               side = 1,
+               n.seg = 3)
+
+?gradientLegend
+
+
+
 
 a <- shp3[which(is.na(shp3$n_species)),]
 a@data     
@@ -171,7 +184,8 @@ target_country@data
 
 #check data from the GRIIS old table
 
-grep("Alaska",old_table$Country)
+grep("Greenland",old_table$Country)
+a <- old_table[which(old_table$Country == "Alaska"),]
 
 test <- shp3[1,]
 plot(test,col=b)
