@@ -1,37 +1,29 @@
 #!/bin/bash
-#$ -S /bin/bash
-#$ -wd /work/$USER
-#$ -j y
+#SBATCH -D /work/arlribei
 
 # ----------------------------------------------------------------------
-# qsub arguments
+# slurm arguments
 # ----------------------------------------------------------------------
 
-#$ -N occRegion
-#$ -l h_rt=24:00:00
-#$ -l h_vmem=1000G
-#$ -binding linear:1
-#$ -t 1
+#SBATCH -J selectOccurrences
+#SBATCH -t 0-24:00:00
+#SBATCH --mem-per-cpu=1000G
 
 # ----------------------------------------------------------------------
 # setup job output/error reports
 # ----------------------------------------------------------------------
 
-#$ -o /work/$USER/$JOB_NAME-$JOB_ID-$TASK_ID_log.txt
-#$ -e /work/$USER/$JOB_NAME-$JOB_ID-$TASK_ID_err.txt
+#SBATCH -o /work/%u/%x-%j-%a_log.txt
 
 # ----------------------------------------------------------------------
 # load required modules
 # ----------------------------------------------------------------------
-
- ml purge
- ml foss/2018b
- module load R/3.5.1-2
+module load foss/2018b R/3.5.1-2
 
 # ----------------------------------------------------------------------
 # execute task
 # ----------------------------------------------------------------------
 
-# set real index 
+# set real index
 
-Rscript --vanilla /data/idiv_meyer/01_projects/eduardo/2nd_chapter/Fresh_water/Scripts/occRegion.R
+Rscript --vanilla /data/idiv_meyer/01_projects/eduardo/sTWIST/Scripts_temporal_fig/selectOccurrences.R

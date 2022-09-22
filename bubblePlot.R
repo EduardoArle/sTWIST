@@ -17,30 +17,76 @@ table$col[which(table$IPBES == "Europe-Central Asia")] <- col.europe
 table$col[which(table$IPBES == "Americas")] <- col.america
 table$col[which(table$IPBES == "Africa")] <- col.africa
 
-size <- (table$Rd/45) +.7
+#create another column with colours to change the labeled countries contour
+table$col2 <- table$col
 
-noise <- 3
-noise_x <- runif(length(table$In),-noise,noise)
-noise_y <- runif(length(table$Im),-noise,noise)
-
-par(pty="s")
-
-plot(table$In + noise_x,table$Im + noise_y,
-     xlim=c(-5,105),ylim=c(-5,105),
-     xlab = substitute(paste("Introduction evidence ("
-                             ,italic("In"),")")),
-     ylab = substitute(paste("Impact evidence ("
-                              ,italic(" Im"),")")),
-     col = table$col, pch=19, cex = size)
+#select countries for the labels
 
 countries <- c("Australia","Brazil","Norway","Italy",
                "Russian Federation","United States of America",
                "United Kingdom of Great Britain and Northern Ireland",
                "Spain","China","Ireland","Indonesia","Greece")
 
+#identify the positions of the countries to be labeled
 positions <- which(table$Location %in% countries)
 
-table$Location[positions]
+size <- (table$Rd/45) +.7
+
+noise <- 3
+noise_x <- runif(length(table$In),-noise,noise)
+noise_y <- runif(length(table$Im),-noise,noise)
+
+setwd("C:/Users/ca13kute/Dropbox/sTWIST/Figure/Bubble_plot")
+
+#jpeg(file="Bubble_plot7.jpeg",width = 1000, height = 1000, quality = 100,
+     #res = 250)
+
+par(mar=c(5,5,5,5))
+par(pty="s")
+
+plot(table$In + noise_x,table$Im + noise_y,
+     xlim=c(-5,105),ylim=c(-5,105),
+<<<<<<< HEAD
+     xlab = substitute(paste("Introduction evidence ("
+                             ,italic("In"),")")),
+     ylab = substitute(paste("Impact evidence ("
+                              ,italic(" Im"),")")),
+     col = table$col, pch=19, cex = size)
+=======
+     xlab = substitute(paste("Introduction evidence (",italic("In"),")")),
+     ylab = substitute(paste("Impact evidence ( ",italic("Im"),")")),
+     cex.lab = 2,
+     cex.axis = 2,
+     col = table$col, bg = table$col, pch=21, cex = size*2)
+>>>>>>> c029fa6ccb67644772240b23a615d9120851afdb
+
+
+
+c_labels <- c("Australia","Brazil","Italy",
+              "Russia","Spain","UK","USA","Indonesia",
+              "China","Greece","Ireland","Norway")
+
+text(table$In[positions]+noise_x[positions],
+     table$Im[positions]+noise_y[positions]-5,
+     c_labels,cex = 1.4)
+
+points(table$In[positions]+noise_x[positions],
+       table$Im[positions]+noise_y[positions],
+       pch=21, cex = size[positions]*2) # fix pch
+
+
+#dev.off()
+
+
+par(pty="s")
+
+plot(table$In + noise_x,table$Im + noise_y,
+     xlim=c(-5,105),ylim=c(-5,105),
+     xlab = substitute(paste("Introduction evidence (",italic("In"),")")),
+     ylab = substitute(paste("Impact evidence ( ",italic("Im"),")")),
+     col = table$col, bg = table$col, pch=21, cex = size)
+
+
 
 c_labels <- c("Australia","Brazil","Italy",
               "Russia","Spain","UK","USA","Indonesia",
@@ -49,6 +95,13 @@ c_labels <- c("Australia","Brazil","Italy",
 text(table$In[positions]+noise_x[positions],
      table$Im[positions]+noise_y[positions]-5,
      c_labels,cex = 0.7)
+
+points(table$In[positions]+noise_x[positions],
+       table$Im[positions]+noise_y[positions],
+       pch=21, cex = size[positions]) # fix pch
+
+
+
 
 ### plot legend
 
@@ -70,6 +123,7 @@ points(x = rep(12,4), y = c(30,24,18,12),
        col = c(col.africa,col.america,col.asia,col.europe))
 
 
+<<<<<<< HEAD
 ### Plot the maps
 
 #load griis_shp
@@ -195,3 +249,5 @@ plot(shp[1,],density=10,col="red")
 rgb(40,40,148) #blue
 rgb(135,0,0) #red
 head(shp3@data)
+=======
+>>>>>>> c029fa6ccb67644772240b23a615d9120851afdb
