@@ -4,7 +4,7 @@ library("plyr");library("data.table")
 setwd("/gpfs1/data/idiv_meyer/01_projects/eduardo/sTWIST/Temporal_figure")
 
 #read table in
-table <- read.csv("Alien_plants_GBIF_occurrences.csv")
+table <- read.csv("Alien_plants_GBIF_occurrences.csv") 
 #table <- read.csv("Alien_plants_GBIF_occurrences.csv",nrow=100000)
 
 #eliminate fossil specimens
