@@ -15,6 +15,6 @@ table3 <- unique(as.data.table(table2),
                  by=c("locationID","temporalID","speciesID"))
 
 #count observations per species per year per region
-table4 <- ddply(table3,.(species,year,Region), nrow)
+table4 <- ddply(table3,.(species,year,Region), nrow) 
 
 saveRDS(table4,"Plants_occurrence_region_count")
