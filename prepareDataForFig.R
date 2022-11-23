@@ -1,3 +1,12 @@
+### This script calculates the three sub-indicators of the knowledge indicator
+### run in the cluster
+
+#use script selectOccurrences to select the occurrences for the species list
+#and link them to desired the shapefile regions
+
+#then, use the script occRegion to count the number of unique occurrences per 
+#species per region
+
 #load libraries
 library(plyr);library(rgdal);library(raster)
 
@@ -5,10 +14,12 @@ library(plyr);library(rgdal);library(raster)
 wd.out <- "/gpfs1/data/idiv_meyer/01_projects/eduardo/sTWIST/Intermediate_steps"
 
 setwd(wd.out)
-table <- readRDS("Occurrence_region_count")
+table <- read.csv("Amphibians_ccurrence_region_count.csv")
 
-names(table)[5] <- "n"
+#rename column with the count of unique occ per region
+names(table)[4] <- "n"
 
+#keep only records between 1970 and 2019
 table2 <- table[which(table$year > 1969),]
 table3 <- table2[which(table2$year < 2020),]
 
@@ -18,8 +29,11 @@ shp <- readOGR("GRIIS_ISO3",dsn=wd_shp)
 reg_match <- shp@data[,c("Region","Region2")]
 
 #add "Region" to table (comes with Region2) to match names in master file
-table4 <- merge(table3,reg_match,by.x = "griisRegion",by.y = "Region2",
+table4 <- merge(table3,reg_match,by.x = "Region",by.y = "Region2",
                 sort = F, all.x = T)
+
+#rename the griis region to griisRegion
+names(table4)[5] <- "griisRegion"
 
 #create column with species and region info
 table4$sps_reg <- paste0(table4$species,"_",table4$Region)
@@ -84,6 +98,10 @@ mf4$ISI <- (mf4$Rd + mf4$Im +mf4$In)/3
 
 setwd(wd.out)
 write.csv(mf4,"Information_Status_Indicator.csv")
+
+
+###############
+
 
 wd <- "I:/MAS/04_personal/Eduardo/sTWIST/GRIIS_shp"
 

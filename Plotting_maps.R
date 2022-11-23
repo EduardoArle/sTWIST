@@ -2,16 +2,16 @@
 library(raster);library(rgdal);library(rgeos)
 
 #set working directories
-wd_shp <- "C:/Users/ca13kute/Dropbox/sTWIST/GRIIS_shp" #griis shapefile
-wd_tables <- "C:/Users/ca13kute/Dropbox/sTWIST" #tables with info to be put in the map
-wd_map_stuff <- "C:/Users/ca13kute/Dropbox/sTWIST" #files to shape the map
+wd_shp <- "/Users/carloseduardoaribeiro/Documents/sTWIST/GRIIS_shp/Updated_shp" #griis shapefile
+wd_tables <- "/Users/carloseduardoaribeiro/Documents/sTWIST/Impact" #tables with info to be put in the map
+wd_map_stuff <- "/Users/carloseduardoaribeiro/Documents/Soup/Map stuff" #files to shape the map
 
 #load table with indicator info
 setwd(wd_tables)
 table <- read.csv("Information_Status_Indicator.csv")
 
 #load griis_shp
-shp <- readOGR("GRIIS_ISO3",dsn = wd_shp)
+shp <- readOGR("GRIIS_first_recs",dsn = wd_shp)
 
 #the griis shapefile is way too detailed, making it impossible
 #to plot, so I simplified the borders a bit
@@ -20,7 +20,7 @@ shp2 <- gSimplify(shp,0.2,topologyPreserve = T)
 #put the attribute table back making a spatialPolygonDataFrame
 shp3 <- SpatialPolygonsDataFrame(shp2,shp@data)
 
-# Load world map frame and continent outline
+Load world map frame and continent outline
 setwd(wd_map_stuff)
 
 world <- readRDS("wrld.rds")
@@ -34,7 +34,7 @@ shp3 <- spTransform(shp3,CRS(proj4string(world)))
 
 #plot maps
 par(mar=c(1,1,1,1))
-plot(shp2)
+plot(shp3)
 plot(worldmapframe,add=T)
 
 #### The next parts are a bit messy because I had to do a lot of
@@ -59,7 +59,7 @@ countries[49] <- missing[21]
 countries[184] <- missing[25]
 
 #create a table to merge the info into the shp attribute table
-merge_table <- table[,c(2,4,8)]
+merge_table <- table[,c(2,4,5,9)]
 
 shp4 <- shp3 #create a copy of the shp
 shp4$n_species <- rep(9999,nrow(shp4))  #include n_species 
@@ -122,11 +122,16 @@ col_leg <- colorRampPalette(c("white", rgb(40,40,148,
                                            alpha=255,
                                            maxColorValue = 255)))
 
-gradientLegend(valRange = c(0, 1), 
-               pos=c(0.3,0,0.7,.015),
-               color = col_leg(20), 
-               side = 1,
-               n.seg = 1)
+# adapted function
+myGradientLegend(valRange = c(0, 1), 
+                 pos=c(0.3,0.23,0.7,.245),
+                 color = col_leg(20), 
+                 side = 1,
+                 n.seg = 0,
+                 values = c("No evidence","Complete"),
+                 cex = 1.5)
+
+## save 2000 width
 
 
 ### Plot small map
@@ -153,11 +158,15 @@ col_leg <- colorRampPalette(c("white", rgb(135,0,0,
                                            alpha=255,
                                            maxColorValue = 255)))
 
-gradientLegend(valRange = c(0, 17), 
-               pos=c(0.3,0,0.7,.015),
-               color = col_leg(20), 
-               side = 1,
-               n.seg = 1)
+# adapted function
+myGradientLegend(valRange = c(0, 17), 
+                 pos=c(0.3,0.23,0.7,.245),
+                 color = col_leg(20), 
+                 side = 1,
+                 n.seg = 1,
+                 cex = 3)
+
+## save 2000 width
 
 
 ########################### SCRAP #########################
