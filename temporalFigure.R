@@ -13,6 +13,7 @@ wd_shp <- "/Users/carloseduardoaribeiro/Documents/sTWIST/GRIIS_shp"
 wd_figures <- "/Users/carloseduardoaribeiro/Documents/sTWIST/Trends/Plots/Regions"
 wd_fig_smooth <- "/Users/carloseduardoaribeiro/Documents/sTWIST/Trends/Plots/Regions_very_smooth"
 wd_fig_smooth_unc <- "/Users/carloseduardoaribeiro/Documents/sTWIST/Trends/Plots/Regions_smooth_uncertainty"
+wd_tables_SI <- "/Users/carloseduardoaribeiro/Documents/sTWIST/Trends/Tables_SI"
 
 #load first rec table and select the desired group
 
@@ -571,170 +572,183 @@ for(i in 1:9)
 
 ##### PLOT PROPORTIONS
 
-#global
-
-rate <- apply(recs_reg_temp[,-1], 2, function(x) sum(x,na.rm=T))/
-        apply(sps_reg_acc[-1], 2, function(x) sum(x,na.rm=T))
-
-n_sps <- apply(sps_reg_temp[-1], 2, function(x) sum(x,na.rm=T))
-  
-years <- names(rate)
-
-setwd(wd_figures)
-
-jpeg(file=paste0("Global.jpeg"))
-
-par(mar=c(4,4,4,6))
-
-#plot number of species (1st records)
-plot(years, n_sps, type = "l", main = "Global", 
-     ylab = NA, xlab = "Year", col = "darkorange2", lwd = 2)
-mtext("Numbers of new species introduction records", side=2, line=3, 
-      col = "darkorange2")
-
-#plot rec/sps rate
-par(new = TRUE)
-
-plot(years, rate, 
-     type = "l", lwd = 2, col = "limegreen",
-     axes = FALSE, bty = "n", xlab = "", ylab = "")
-
-axis(side=4, at = pretty(range(rate)))
-mtext("Survey effort", side=4, line=3, col = "limegreen")
-
-dev.off()
-
-#regions
-
 regions = sort(unique(first_recs4$Region2))
-
-for(i in 1:length(regions))
-{
-  rate <- as.numeric(recs_reg_temp[which(recs_reg_temp$Region == regions[i]),-1])/
-         as.numeric(sps_reg_acc[which(sps_reg_acc$Region == regions[i]),-1])
-  
-  n_sps <- as.numeric(sps_reg_temp[which(sps_reg_temp$Region == regions[i]),-1])
-  
-  if(!NaN %in% unique(rate)){
-    
-    setwd(wd_figures)
-    
-    jpeg(file=paste0(regions[i],".jpeg"))
-    
-    par(mar=c(4,4,4,6))
-    
-    #plot number of species (1st records)
-    plot(years, n_sps, type = "l", main = regions[i], 
-         ylab = NA, xlab = "Year", col = "darkorange2", lwd = 2)
-    mtext("Numbers of new species introduction records", side=2, line=3, 
-          col = "darkorange2")
-
-    #plot rec/sps rate
-    par(new = TRUE)
-    
-    plot(years, rate, 
-         type = "l", lwd = 2, col = "limegreen",
-         axes = FALSE, bty = "n", xlab = "", ylab = "")
-    
-    axis(side=4, at = pretty(range(n_sps)))
-    mtext("Survey effort", side=4, line=3, col = "limegreen")
-    
-    
-    dev.off()
-  }
-    
-}
+years <- c(1974,1979,1984,1989,1994,1999,2004,2009,2014)
 
 
 #smooth curves with for plotting
 
+{ ######global
+
+# rate <- apply(recs_reg_temp[,-1], 2, function(x) sum(x,na.rm=T))/
+#         apply(sps_reg_acc[-1], 2, function(x) sum(x,na.rm=T))
+# 
+# n_sps <- apply(sps_reg_temp[-1], 2, function(x) sum(x,na.rm=T))
+#   
+# years <- names(rate)
+# 
+# setwd(wd_figures)
+# 
+# jpeg(file=paste0("Global.jpeg"))
+# 
+# par(mar=c(4,4,4,6))
+# 
+# #plot number of species (1st records)
+# plot(years, n_sps, type = "l", main = "Global", 
+#      ylab = NA, xlab = "Year", col = "darkorange2", lwd = 2)
+# mtext("Numbers of new species introduction records", side=2, line=3, 
+#       col = "darkorange2")
+# 
+# #plot rec/sps rate
+# par(new = TRUE)
+# 
+# plot(years, rate, 
+#      type = "l", lwd = 2, col = "limegreen",
+#      axes = FALSE, bty = "n", xlab = "", ylab = "")
+# 
+# axis(side=4, at = pretty(range(rate)))
+# mtext("Survey effort", side=4, line=3, col = "limegreen")
+# 
+# dev.off()
+
+#regions
+  }
+
+
+
+{
+  # for(i in 1:length(regions))
+  # {
+  #   rate <- as.numeric(recs_reg_temp[which(recs_reg_temp$Region == regions[i]),-1])/
+  #     as.numeric(sps_reg_acc[which(sps_reg_acc$Region == regions[i]),-1])
+  #   
+  #   n_sps <- as.numeric(sps_reg_temp[which(sps_reg_temp$Region == regions[i]),-1])
+  #   
+  #   if(!NaN %in% unique(rate)){
+  #     
+  #     setwd(wd_figures)
+  #     
+  #     jpeg(file=paste0(regions[i],".jpeg"))
+  #     
+  #     par(mar=c(4,4,4,6))
+  #     
+  #     #plot number of species (1st records)
+  #     plot(years, n_sps, type = "l", main = regions[i], 
+  #          ylab = NA, xlab = "Year", col = "darkorange2", lwd = 2)
+  #     mtext("Numbers of new species introduction records", side=2, line=3, 
+  #           col = "darkorange2")
+  #     
+  #     #plot rec/sps rate
+  #     par(new = TRUE)
+  #     
+  #     plot(years, rate, 
+  #          type = "l", lwd = 2, col = "limegreen",
+  #          axes = FALSE, bty = "n", xlab = "", ylab = "")
+  #     
+  #     axis(side=4, at = pretty(range(n_sps)))
+  #     mtext("Survey effort", side=4, line=3, col = "limegreen")
+  #     
+  #     
+  #     dev.off()
+  #   }
+  #   
+  # }
+}
+
 #global
+{
+  # rate <- apply(recs_reg_temp[,-1], 2, function(x) sum(x,na.rm=T))/
+  #   apply(sps_reg_acc[-1], 2, function(x) sum(x,na.rm=T))
+  # 
+  # n_sps <- apply(sps_reg_temp[-1], 2, function(x) sum(x,na.rm=T))
+  # 
+  # years <- as.numeric(names(rate))
+  # 
+  # rate_years <- data.frame(rate = rate, n_sps = n_sps, years = years)
+  # 
+  # #smooth the rate curve
+  # fit_n_sps <- fitted(gam(n_sps ~ ns(years, df=2), data=rate_years))
+  # 
+  # #smooth the n_sps curve
+  # fit_rate <- fitted(gam(rate ~ ns(years, df=2), data=rate_years))
+  # 
+  # setwd(wd_fig_smooth_unc)
+  # 
+  # jpeg(file=paste0("Global.jpeg"))
+  # 
+  # par(mar=c(4,4,4,6))
+  # 
+  # #plot number of species (1st records)
+  # 
+  # plot(years, fit_n_sps, type = "l", main = "Global", 
+  #      ylab = NA, xlab = "Year", col = "darkorange2", lwd = 2)
+  # mtext("Numbers of new species introduction records", side=2, line=3, 
+  #       col = "darkorange2")
+  # 
+  # #uncertainty
+  # 
+  # t <- data.frame(n_sps, fit_n_sps)
+  # t$dif <- t$n_sps - t$fit_n_sps
+  # 
+  # unc1 <- t$fit_n_sps - abs(t$dif)
+  # unc2 <- t$fit_n_sps + abs(t$dif)
+  # 
+  # unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
+  # 
+  # fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
+  # fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
+  # 
+  # #plot uncertainties (years and uncertainty reversed to make a polygon)
+  # 
+  # polygon(c(years, rev(years)), 
+  #         c(fit_unc1, rev(fit_unc2)), 
+  #         col = rgb(252, 168, 24, max = 255, alpha = 55), 
+  #         border = rgb(252, 168, 24, max = 255, alpha = 55))
+  # 
+  # #plot rec/sps rate
+  # par(new = TRUE)
+  # 
+  # plot(years, fit_rate, 
+  #      type = "l", lwd = 2, col = "limegreen",
+  #      axes = FALSE, bty = "n", xlab = "", ylab = "")
+  # 
+  # axis(side=4, at = pretty(range(fit_rate)))
+  # mtext("Survey effort", side=4, line=3, col = "limegreen")
+  # 
+  # #uncertainty
+  # 
+  # t <- data.frame(rate, fit_rate)
+  # t$dif <- t$rate - t$fit_rate
+  # 
+  # unc1 <- t$fit_rate - abs(t$dif)
+  # unc2 <- t$fit_rate+ abs(t$dif)
+  # 
+  # unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
+  # 
+  # fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
+  # fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
+  # 
+  # #plot uncertainties (years and uncertainty reversed to make a polygon)
+  # 
+  # polygon(c(years, rev(years)), 
+  #         c(fit_unc1, rev(fit_unc2)), 
+  #         col = rgb(91, 230, 41, max = 255, alpha = 55), 
+  #         border = rgb(91, 230, 41, max = 255, alpha = 55))
+  # 
+  # dev.off()
+}
 
-rate <- apply(recs_reg_temp[,-1], 2, function(x) sum(x,na.rm=T))/
-  apply(sps_reg_acc[-1], 2, function(x) sum(x,na.rm=T))
+### save tables
 
-n_sps <- apply(sps_reg_temp[-1], 2, function(x) sum(x,na.rm=T))
+setwd(wd_tables_SI)
+write.csv(sps_reg_temp, "First_records.csv", row.names = F)
+write.csv(recs_reg_temp, "Average_revords.csv", row.names = F)
 
-years <- as.numeric(names(rate))
-
-rate_years <- data.frame(rate = rate, n_sps = n_sps, years = years)
-
-#smooth the rate curve
-fit_n_sps <- fitted(gam(n_sps ~ ns(years, df=2), data=rate_years))
-
-#smooth the n_sps curve
-fit_rate <- fitted(gam(rate ~ ns(years, df=2), data=rate_years))
-
-setwd(wd_fig_smooth_unc)
-
-jpeg(file=paste0("Global.jpeg"))
-
-par(mar=c(4,4,4,6))
-
-#plot number of species (1st records)
-
-plot(years, fit_n_sps, type = "l", main = "Global", 
-     ylab = NA, xlab = "Year", col = "darkorange2", lwd = 2)
-mtext("Numbers of new species introduction records", side=2, line=3, 
-      col = "darkorange2")
-
-#uncertainty
-
-t <- data.frame(n_sps, fit_n_sps)
-t$dif <- t$n_sps - t$fit_n_sps
-
-unc1 <- t$fit_n_sps - abs(t$dif)
-unc2 <- t$fit_n_sps + abs(t$dif)
-
-unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
-
-fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
-fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
-
-#plot uncertainties (years and uncertainty reversed to make a polygon)
-
-polygon(c(years, rev(years)), 
-        c(fit_unc1, rev(fit_unc2)), 
-        col = rgb(252, 168, 24, max = 255, alpha = 55), 
-        border = rgb(252, 168, 24, max = 255, alpha = 55))
-
-#plot rec/sps rate
-par(new = TRUE)
-
-plot(years, fit_rate, 
-     type = "l", lwd = 2, col = "limegreen",
-     axes = FALSE, bty = "n", xlab = "", ylab = "")
-
-axis(side=4, at = pretty(range(fit_rate)))
-mtext("Survey effort", side=4, line=3, col = "limegreen")
-
-#uncertainty
-
-t <- data.frame(rate, fit_rate)
-t$dif <- t$rate - t$fit_rate
-
-unc1 <- t$fit_rate - abs(t$dif)
-unc2 <- t$fit_rate+ abs(t$dif)
-
-unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
-
-fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
-fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
-
-#plot uncertainties (years and uncertainty reversed to make a polygon)
-
-polygon(c(years, rev(years)), 
-        c(fit_unc1, rev(fit_unc2)), 
-        col = rgb(91, 230, 41, max = 255, alpha = 55), 
-        border = rgb(91, 230, 41, max = 255, alpha = 55))
-
-dev.off()
 
 ### colour 1
 
 #regions smooth
 
-regions = sort(unique(first_recs4$Region2))
 
 for(i in 1:length(regions))
 {
@@ -760,96 +774,9 @@ for(i in 1:length(regions))
     par(mar=c(4,4,4,6))
     
     #plot number of species (1st records)
-    plot(years, fit_n_sps, type = "l", main = regions[i], cex.main = 4,
-         ylab = NA, xlab = NA, col = "#ca0020", lwd = 4, cex.axis = 2.5,
-         xaxt = 'n')
-    
-    #uncertainty
-    
-    t <- data.frame(n_sps, fit_n_sps)
-    t$dif <- t$n_sps - t$fit_n_sps
-    
-    unc1 <- t$fit_n_sps - abs(t$dif)
-    unc2 <- t$fit_n_sps + abs(t$dif)
-    
-    unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
-    
-    fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
-    fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
-    
-    #plot uncertainties (years and uncertainty reversed to make a polygon)
-    
-    polygon(c(years, rev(years)), 
-            c(fit_unc1, rev(fit_unc2)), 
-            col = rgb(202, 0, 32, max = 255, alpha = 55), 
-            border = rgb(202 ,0, 32, max = 255, alpha = 55))
-    
-    #plot rec/sps rate
-    par(new = TRUE)
-    
-    plot(years, fit_rate, type = "l", lwd = 4, col = "#0571b0",
-         axes = FALSE, bty = "n", xlab = "", ylab = "")
-    
-    axis(side=4, at = pretty(range(fit_rate)), cex.axis = 2.5)
-
-    #uncertainty
-    
-    t <- data.frame(rate, fit_rate)
-    t$dif <- t$rate - t$fit_rate
-    
-    unc1 <- t$fit_rate - abs(t$dif)
-    unc2 <- t$fit_rate+ abs(t$dif)
-    
-    unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
-    
-    fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
-    fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
-    
-    #plot uncertainties (years and uncertainty reversed to make a polygon)
-    
-    polygon(c(years, rev(years)), 
-            c(fit_unc1, rev(fit_unc2)), 
-            col = rgb(5, 113, 176, max = 255, alpha = 55), 
-            border = rgb(5, 113, 176, max = 255, alpha = 55))
-    
-    
-    dev.off()
-  }
-  
-}
-
-#regions smooth
-
-### Colour 2
-
-regions = sort(unique(first_recs4$Region2))
-
-for(i in 1:length(regions))
-{
-  rate <- as.numeric(recs_reg_temp[which(recs_reg_temp$Region == regions[i]),-1])/
-    as.numeric(sps_reg_acc[which(sps_reg_acc$Region == regions[i]),-1])
-  
-  n_sps <- as.numeric(sps_reg_temp[which(sps_reg_temp$Region == regions[i]),-1])
-  
-  rate_years <- data.frame(rate = rate, n_sps = n_sps, years = as.numeric(years))
-  
-  if(!NaN %in% unique(rate)){
-    
-    #smooth the rate curve
-    fit_n_sps <- fitted(gam(n_sps ~ ns(years, df=2), data=rate_years))
-    
-    #smooth the n_sps curve
-    fit_rate <- fitted(gam(rate ~ ns(years, df=2), data=rate_years))
-    
-    setwd(wd_fig_smooth_unc)
-    
-    jpeg(file=paste0(regions[i],".jpeg"))
-    
-    par(mar=c(4,4,4,6))
-    
-    #plot number of species (1st records)
-    plot(years, fit_n_sps, type = "l",
-         ylab = NA, xlab = NA, col = "#d01c8b", lwd = 4, cex.axis = 2.5,
+    plot(years, fit_n_sps, type = "l", cex.main = 4,
+         ylab = NA, xlab = NA, col = "#d01c8b", lwd = 4, 
+         cex.axis = 2.5, col.axis = "#d01c8b",
          xaxt = 'n')
     
     #uncertainty
@@ -878,8 +805,8 @@ for(i in 1:length(regions))
     plot(years, fit_rate, type = "l", lwd = 4, col = "#4dac26",
          axes = FALSE, bty = "n", xlab = "", ylab = "")
     
-    axis(side=4, at = pretty(range(fit_rate)), cex.axis = 2.5)
-    
+    axis(side=4, at = pretty(range(fit_rate)), cex.axis = 2.5, col.axis = "#4dac26")
+
     #uncertainty
     
     t <- data.frame(rate, fit_rate)
@@ -906,15 +833,44 @@ for(i in 1:length(regions))
   
 }
 
+
+##### botom figures, with year in x-axis
+
+#iceland 
+i = 59
+
+#croatia
+i = 31
+
+#belgium
+i = 13
+
+rate <- as.numeric(recs_reg_temp[which(recs_reg_temp$Region == regions[i]),-1])/
+  as.numeric(sps_reg_acc[which(sps_reg_acc$Region == regions[i]),-1])
+
+n_sps <- as.numeric(sps_reg_temp[which(sps_reg_temp$Region == regions[i]),-1])
+
+rate_years <- data.frame(rate = rate, n_sps = n_sps, years = as.numeric(years))
+
+
   
+  #smooth the rate curve
+  fit_n_sps <- fitted(gam(n_sps ~ ns(years, df=2), data=rate_years))
   
-  #### col 3
+  #smooth the n_sps curve
+  fit_rate <- fitted(gam(rate ~ ns(years, df=2), data=rate_years))
+  
+  #setwd(wd_fig_smooth_unc)
+  setwd('/Users/carloseduardoaribeiro/Documents/sTWIST/Trends/Plots/Plots_with_year')
+  
+  jpeg(file=paste0(regions[i],".jpeg"))
   
   par(mar=c(4,4,4,6))
   
   #plot number of species (1st records)
-  plot(years, fit_n_sps, type = "l", main = regions[i], cex.main = 4,
-       ylab = NA, xlab = NA, col = "#7b3294", lwd = 4, cex.axis = 3,
+  plot(years, fit_n_sps, type = "l",
+       ylab = NA, xlab = NA, col = "#d01c8b", lwd = 4, 
+       cex.axis = 2.5, col.axis = "#d01c8b",
        xaxt = 'n')
   
   #uncertainty
@@ -932,16 +888,20 @@ for(i in 1:length(regions))
   
   #plot uncertainties (years and uncertainty reversed to make a polygon)
   
-  polygon(c(years, rev(years)), 
-          c(fit_unc1, rev(fit_unc2)), 
-          col = rgb(123, 50, 148, max = 255, alpha = 55), 
-          border = rgb(123, 50, 148, max = 255, alpha = 55))
+  polygon(c(years, rev(years)),
+          c(fit_unc1, rev(fit_unc2)),
+          col = rgb(208, 28, 139, max = 255, alpha = 55),
+          border = rgb(208, 28, 139, max = 255, alpha = 55))
   
   #plot rec/sps rate
   par(new = TRUE)
   
-  plot(years, fit_rate, type = "l", lwd = 4, col = "#008837",
+  plot(years, fit_rate, type = "l", lwd = 4, col = "#4dac26",
        axes = FALSE, bty = "n", xlab = "", ylab = "")
+  
+  axis(side=4, at = pretty(range(fit_rate)), cex.axis = 2.5, col.axis = "#4dac26")
+  axis(side=1, at = years, cex.axis = 1.5)
+  
   
   #uncertainty
   
@@ -958,14 +918,162 @@ for(i in 1:length(regions))
   
   #plot uncertainties (years and uncertainty reversed to make a polygon)
   
-  polygon(c(years, rev(years)), 
-          c(fit_unc1, rev(fit_unc2)), 
-          col = rgb(77, 172, 38, max = 255, alpha = 55), 
+  polygon(c(years, rev(years)),
+          c(fit_unc1, rev(fit_unc2)),
+          col = rgb(77, 172, 38, max = 255, alpha = 55),
           border = rgb(77, 172, 38, max = 255, alpha = 55))
+
+  ### save plots with 550 width and 520 height
   
-  
-  
-  
-  
-  
-  
+# par(mar=c(4,4,4,6))
+# 
+# #plot number of species (1st records)
+# plot(years, fit_n_sps, type = "l", main = regions[i], cex.main = 4,
+#      ylab = NA, xlab = NA, col = "#7b3294", lwd = 4, cex.axis = 3,
+#      xaxt = 'n')
+# 
+# #uncertainty
+# 
+# t <- data.frame(n_sps, fit_n_sps)
+# t$dif <- t$n_sps - t$fit_n_sps
+# 
+# unc1 <- t$fit_n_sps - abs(t$dif)
+# unc2 <- t$fit_n_sps + abs(t$dif)
+# 
+# unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
+# 
+# fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
+# fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
+# 
+# #plot uncertainties (years and uncertainty reversed to make a polygon)
+# 
+# polygon(c(years, rev(years)), 
+#         c(fit_unc1, rev(fit_unc2)), 
+#         col = rgb(123, 50, 148, max = 255, alpha = 55), 
+#         border = rgb(123, 50, 148, max = 255, alpha = 55))
+# 
+# #plot rec/sps rate
+# par(new = TRUE)
+# 
+# plot(years, fit_rate, type = "l", lwd = 4, col = "#008837",
+#      axes = FALSE, bty = "n", xlab = "", ylab = "")
+# 
+# #uncertainty
+# 
+# t <- data.frame(rate, fit_rate)
+# t$dif <- t$rate - t$fit_rate
+# 
+# unc1 <- t$fit_rate - abs(t$dif)
+# unc2 <- t$fit_rate+ abs(t$dif)
+# 
+# unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
+# 
+# fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
+# fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
+# 
+# #plot uncertainties (years and uncertainty reversed to make a polygon)
+# 
+# polygon(c(years, rev(years)), 
+#         c(fit_unc1, rev(fit_unc2)), 
+#         col = rgb(77, 172, 38, max = 255, alpha = 55), 
+#         border = rgb(77, 172, 38, max = 255, alpha = 55))
+
+
+
+
+
+
+
+
+
+#regions smooth
+
+## Colour 2
+
+regions = sort(unique(first_recs4$Region2))
+
+for(i in 1:length(regions))
+{
+  rate <- as.numeric(recs_reg_temp[which(recs_reg_temp$Region == regions[i]),-1])/
+    as.numeric(sps_reg_acc[which(sps_reg_acc$Region == regions[i]),-1])
+
+  n_sps <- as.numeric(sps_reg_temp[which(sps_reg_temp$Region == regions[i]),-1])
+
+  rate_years <- data.frame(rate = rate, n_sps = n_sps, years = as.numeric(years))
+
+  if(!NaN %in% unique(rate)){
+
+    #smooth the rate curve
+    fit_n_sps <- fitted(gam(n_sps ~ ns(years, df=2), data=rate_years))
+
+    #smooth the n_sps curve
+    fit_rate <- fitted(gam(rate ~ ns(years, df=2), data=rate_years))
+
+    #setwd(wd_fig_smooth_unc)
+    setwd('/Users/carloseduardoaribeiro/Documents/sTWIST/Trends/Plots/Plots_with_year')
+
+    jpeg(file=paste0(regions[i],".jpeg"))
+
+    par(mar=c(4,4,4,6))
+
+    #plot number of species (1st records)
+    plot(years, fit_n_sps, type = "l",
+         ylab = NA, xlab = NA, col = "#d01c8b", lwd = 4, cex.axis = 2.5,
+         xaxt = 'n')
+
+    #uncertainty
+
+    t <- data.frame(n_sps, fit_n_sps)
+    t$dif <- t$n_sps - t$fit_n_sps
+
+    unc1 <- t$fit_n_sps - abs(t$dif)
+    unc2 <- t$fit_n_sps + abs(t$dif)
+
+    unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
+
+    fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
+    fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
+
+    #plot uncertainties (years and uncertainty reversed to make a polygon)
+
+    polygon(c(years, rev(years)),
+            c(fit_unc1, rev(fit_unc2)),
+            col = rgb(208, 28, 139, max = 255, alpha = 55),
+            border = rgb(208, 28, 139, max = 255, alpha = 55))
+
+    #plot rec/sps rate
+    par(new = TRUE)
+
+    plot(years, fit_rate, type = "l", lwd = 4, col = "#4dac26",
+         axes = FALSE, bty = "n", xlab = "", ylab = "")
+
+    axis(side=4, at = pretty(range(fit_rate)), cex.axis = 2.5)
+    axis(side=1, at = years, cex.axis = 2)
+
+
+    #uncertainty
+
+    t <- data.frame(rate, fit_rate)
+    t$dif <- t$rate - t$fit_rate
+
+    unc1 <- t$fit_rate - abs(t$dif)
+    unc2 <- t$fit_rate+ abs(t$dif)
+
+    unc <- data.frame(unc1 = unc1, unc2 = unc2, years = years)
+
+    fit_unc1 <- fitted(gam(unc1 ~ ns(years, df=2), data = unc))
+    fit_unc2 <- fitted(gam(unc2 ~ ns(years, df=2), data = unc))
+
+    #plot uncertainties (years and uncertainty reversed to make a polygon)
+
+    polygon(c(years, rev(years)),
+            c(fit_unc1, rev(fit_unc2)),
+            col = rgb(77, 172, 38, max = 255, alpha = 55),
+            border = rgb(77, 172, 38, max = 255, alpha = 55))
+
+
+    dev.off()
+  }
+
+}
+
